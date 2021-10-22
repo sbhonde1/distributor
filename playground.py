@@ -1,15 +1,39 @@
-from distributor.wrapper import Compute
+# from distributor.wrapper import Compute
+from distributor.deco import Compute, Synchronized
+import time
+
+
+def _square(x):
+    return x * x
 
 
 @Compute
+def square(x):
+    return x * x
+
+
+@Synchronized
 def calculate(n):
-    def square(x):
-        return x * x
+
     result = []
-    for i in range(n):
+    for i in range(int(n)):
         result.append(square(i))
     return result
 
 
-print(calculate(10).run())
-# print(square(2))
+print("ray")
+# n = 1e8
+n = 10
+start = time.time()
+ray_result = calculate(n)
+print(time.time() - start)
+print(ray_result)
+
+
+print("serial")
+start = time.time()
+result = []
+for i in range(int(n)):
+    result.append(_square(i))
+print(time.time() - start)
+print(result[:10])

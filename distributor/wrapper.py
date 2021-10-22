@@ -1,9 +1,7 @@
 import ray
-
 ray.init()
 
 
-# @ray.remote
 class Compute(object):
     """
     This class is a decorator class which is a wrapper to x class that runs ray.
@@ -14,21 +12,18 @@ class Compute(object):
         print("init ", args, kwargs)
         self.args = args
         self.kwargs = kwargs
+        self.futures = []
 
-    # @ray.method(num_returns=1)
     def run(self):
-        print("run")
-        wrapper = Wrapper.remote(self.args[0], self.kwargs["func_args"])
-        # wrapper.reset.remote()
-        results = wrapper.run.remote()
-        results = ray.get(results)
+        # print("run")
+        results = ray.get(self.futures)
         return results
-        # print(self.args[0](x))
-        # print("run", self.args, self.kwargs)
 
     def __call__(self, *args, **kwargs):
-        print("call", args, kwargs)
+        # print("call", args, kwargs)
         self.kwargs["func_args"] = args[0]
+        wrapper = Wrapper.remote(self.args[0], self.kwargs["func_args"])
+        self.futures.append(wrapper.run.remote())
         return self
 
 
