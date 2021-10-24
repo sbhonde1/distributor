@@ -1,4 +1,4 @@
-from distributor.wrapper import Param_Compute
+from distributor.wrapper import Compute
 # from distributor.deco import Compute, Synchronized
 import time
 import ray
@@ -10,7 +10,7 @@ def _square(x):
     return x * x
 
 
-@Param_Compute(n=int(1e5))
+@Compute(n=int(1e5))
 def square(x):
     time.sleep(1e-3)
     return x * x
